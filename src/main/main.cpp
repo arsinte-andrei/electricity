@@ -12,7 +12,6 @@
 #include "AtpSingleApplication.h"
 #include "AtpSettings.h"
 #include "AtpMainWindow.h"
-#include "AtpDb.h"
 
 #if defined(Q_OS_LINUX)
 void catchSigPipe(int s){
@@ -52,9 +51,9 @@ int main(int argc, char *argv[]){
 	AtpSingleApplication *app = new AtpSingleApplication("atp", argc, argv);
 	app->setOrganizationName("atp");
 	app->setOrganizationDomain("atp-trading.net");
-	app->setApplicationName("atpElectricity");
+	app->setApplicationName("Electricity");
 	app->setApplicationVersion("1");
-	app->setApplicationDisplayName("atpElectricity");
+	app->setApplicationDisplayName("Electricity");
 //sigPipe problems
 #if defined(Q_OS_LINUX)
 	signal(SIGPIPE,catchSigPipe);
@@ -75,15 +74,25 @@ int main(int argc, char *argv[]){
 	qDebug() << QSqlDatabase::drivers();
 
 // set current working directory:
-	QDir::setCurrent(AtpSettings::getApplicationPath());
+	QString appPath = AtpSettings::getApplicationPath();
+	QDir::setCurrent(appPath);
 
 // disable Qt library paths to avoid plugins for Qt designer from being found:
 	QString pluginPath = AtpSettings::getPluginPath();
 	if (pluginPath.isEmpty()) {
 		qWarning() << QString("Folder '%1' does not exist").arg(pluginPath);
+		delete app;
 		return -1;
 	}
 	app->setLibraryPaths(QStringList() << pluginPath);
+
+//check the data folder
+	QString dataBaseFolder = AtpSettings::getDataBasePath();
+	if(!dataBaseFolder.endsWith("dataBase")){
+		qWarning() << QString("Electricity has no rights in '%1' please edit permisions").arg(dataBaseFolder);
+		delete app;
+		return -2;
+	}
 
 //main window
 	AtpMainWindow *win = new AtpMainWindow();

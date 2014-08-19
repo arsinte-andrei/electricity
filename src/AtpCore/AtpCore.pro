@@ -14,7 +14,13 @@ SOURCES += \
     AtpLocalPeer.cpp \
 	AtpLockedFile.cpp \
     AtpSettings.cpp \
-    AtpDb.cpp
+    AtpDef.cpp \
+    AtpSqlQuery.cpp \
+    AtpDbComp.cpp \
+    AtpDbMain.cpp \
+    AtpDbClient.cpp \
+    AtpTreeComboBox.cpp \
+    AtpDbStructure.cpp
 
 win32 {
 	SOURCES += AtpLockedFile_win.cpp
@@ -29,7 +35,13 @@ HEADERS +=\
     AtpLocalPeer.h \
     AtpLockedFile.h \
     AtpSettings.h \
-    AtpDb.h
+    AtpDef.h \
+    AtpSqlQuery.h \
+    AtpDbComp.h \
+    AtpDbMain.h \
+    AtpDbClient.h \
+    AtpTreeComboBox.h \
+    AtpDbStructure.h
 
 CONFIG += plugin
 NAME = AtpCoreLib

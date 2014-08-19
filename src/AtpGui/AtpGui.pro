@@ -9,11 +9,13 @@ TEMPLATE = lib
 DEFINES += ATPGUI_LIBRARY
 
 SOURCES += \
-	AtpMainWindow.cpp
+	AtpMainWindow.cpp \
+	AtpMdiArea.cpp
 
 HEADERS +=\
 		atpguilib_global.h \
-	AtpMainWindow.h
+	AtpMainWindow.h \
+	AtpMdiArea.h \
 
 CONFIG += plugin
 NAME = AtpGuiLib
@@ -23,3 +25,7 @@ LIBS += \
 	-lAtpCoreLib \
 	-lAtpToolsLib \
 	-lAtpCompanyLib \
+	-lAtpClientLib \
+
+RESOURCES += \
+	png32/png32.qrc

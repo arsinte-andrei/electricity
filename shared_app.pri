@@ -9,4 +9,5 @@ LIBS += \
 	-lAtpGuiLib \
 	-lAtpCoreLib \
 	-lAtpToolsLib \
+	-lAtpClientLib \
 	-lAtpCompanyLib \

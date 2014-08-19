@@ -6,9 +6,8 @@
 include(shared.pri)
 TEMPLATE = subdirs
 
-SUBDIRS += \
-#	language \
-	src
+SUBDIRS += src
+
 OTHER_FILES += \
 	LICENSE \
 	README.md

@@ -39,10 +39,39 @@ QString AtpSettings::getPluginPath() {
 	QString pluginFolder = "plugins";
 	if (!appDir.cd(pluginFolder)) {
 		qWarning() << QString("Folder '%1' does not exist").arg(pluginFolder);
-		return QString();
+		return pluginFolder;
 	}
 	return appDir.path();
 }
+
+QString AtpSettings::getDataBasePath() {
+	QDir appDir = QDir(getApplicationPath());
+
+	QString dbFolder = "dataBase";
+	if (!appDir.cd(dbFolder)) {
+		qWarning() << QString("Folder '%1' does not exist").arg(dbFolder);
+		if(appDir.mkdir(dbFolder)){
+			appDir.cd(dbFolder);
+		}
+	}
+	return appDir.path();
+}
+
+QString AtpSettings::getCompanyPath(QString companyFilesFolder, bool isNew) {
+	QDir appDir = QDir(getDataBasePath());
+	if (!appDir.cd(companyFilesFolder)) {
+		qWarning() << QString("Folder '%1' does not exist").arg(companyFilesFolder);
+		if (isNew){
+			if(appDir.mkdir(companyFilesFolder)){
+				appDir.cd(companyFilesFolder);
+			} else {
+				qWarning() << QString("Error no permission in '%1' does not exist").arg(companyFilesFolder);
+			}
+		}
+	}
+	return appDir.path();
+}
+
 
 QSettings *AtpSettings::getMySettings(QString iniFileName){
 	if (mySettings.value(iniFileName)==NULL) {

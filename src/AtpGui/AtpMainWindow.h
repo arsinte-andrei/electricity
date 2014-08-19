@@ -9,6 +9,9 @@
 #include <QMdiArea>
 #include <QToolBar>
 
+#include "AtpDef.h"
+#include "AtpMdiArea.h"
+
 class ATPGUILIB_EXPORT AtpMainWindow : public QMainWindow{
 		Q_OBJECT
 	public:
@@ -17,15 +20,22 @@ class ATPGUILIB_EXPORT AtpMainWindow : public QMainWindow{
 
 	public slots:
 		void quit();
+//		void testSlot(bool closeThem);
 
 	signals:
 		void closeRequested();
+		void windowResized(AtpDef::mainWindowLoadingStatus);
+		void dataBaseRestarted(AtpDef::mainWindowLoadingStatus);
+		void companyChanged(AtpDef::mainWindowLoadingStatus);
+		void clientChanged(AtpDef::mainWindowLoadingStatus);
 
 	protected:
-		virtual void closeEvent(QCloseEvent *event);
-		QMdiArea *mdiArea;
+		void closeEvent(QCloseEvent *event);
+		void resizeEvent (QResizeEvent *event);
 
 	private:
+		QString winTitleCompany, winTitleClient;
+		AtpDef::mainWindowLoadingStatus appStatus;
 		void readSettings();
 		void writeSettings();
 
@@ -36,26 +46,32 @@ class ATPGUILIB_EXPORT AtpMainWindow : public QMainWindow{
 		void createToolBars();
 		void createStatusBar();
 
+		AtpMdiArea *mdiArea;
 //File
 		QMenu *menuFile;
 		QToolBar *toolBarFile;
 		QAction *actFileExit;
+		QAction *actFileClose;
+		QAction *actFileCloseAll;
 //Company
 		QMenu *menuCompany;
 		QToolBar *toolBarComp;
 		QAction *actCompChuse;
 		QAction *actCompEdit;
 		QAction *actCompSuppliers;
-		QAction *actCompClients;
-//Modules
-		QMenu *menuModules;
+		QAction *actCompMaterials;
+		QAction *actCompPoints;
+		QAction *actCompPlace;
+//Client
+		QMenu *menuClients;
 		QToolBar *toolBarModules;
-		QAction *actModulesInvoices;
-		QAction *actModulesReceipt;
-		QAction *actModulesQuotes;
-		QAction *actModulesGroupPlace;
-		QAction *actModulesPoints;
-		QAction *actModulesMaterials;
+		QAction *actClientInvoices;
+		QAction *actClientReceipt;
+		QAction *actClientQuotes;
+		QAction *actClientPoints;
+		QAction *actClientMaterials;
+		QAction *actClientList;
+		QAction *actClientChuse;
 //Tools
 		QMenu *menuTools;
 		QToolBar *toolBarTools;
@@ -79,9 +95,20 @@ class ATPGUILIB_EXPORT AtpMainWindow : public QMainWindow{
 	private slots:
 		void updateMenus();
 		void restartDatabase();
-
+		void checkForCompany();
+		void checkForClient();
+//company
 		void onActCompChuseCompany();
 		void onActCompEditCompany();
+		void onActCompEditSuppliers();
+		void onActCompMaterials();
+		void onActCompPoints();
+		void onActCompGroupPlace();
+//Clients
+		void onActClientChuseClient();
+		void onActClientEditClientsList();
+		void onActClientPoints();
+//Tools
 		void onActToolsSettings();
 
 };

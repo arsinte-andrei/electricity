@@ -1,0 +1,24 @@
+<RCC>
+    <qresource prefix="/">
+        <file>exit.png</file>
+        <file>info.png</file>
+        <file>edit_comp.png</file>
+        <file>select_comp.png</file>
+        <file>clients.png</file>
+        <file>suppliers.png</file>
+        <file>quotes.png</file>
+        <file>template.png</file>
+        <file>invoice.png</file>
+        <file>receipt.png</file>
+        <file>place.png</file>
+        <file>points.png</file>
+        <file>materials.png</file>
+        <file>users.png</file>
+        <file>settings.png</file>
+        <file>reports.png</file>
+        <file>register.png</file>
+        <file>help.png</file>
+        <file>update.png</file>
+        <file>elec.png</file>
+    </qresource>
+</RCC>

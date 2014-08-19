@@ -61,8 +61,6 @@ LIBS += -L$$PWD/$$ROUTDIR
 INCLUDEPATH += \
 	$$PWD/src/AtpCore \
 	$$PWD/src/AtpTools \
+	$$PWD/src/AtpClient \
 	$$PWD/src/AtpCompany \
 	$$PWD/src/AtpGui
-
-RESOURCES += \
-	../png32/png32.qrc

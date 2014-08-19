@@ -21,10 +21,12 @@ class ATPCORE_EXPORT AtpSettings{
 
 		static QString getApplicationPath();
 		static QString getPluginPath();
+		static QString getDataBasePath();
+		static QString getCompanyPath(QString companyFilesFolder, bool isNew = false);
 
 		static QSettings *getMySettings(QString iniFileName = "atp.ini");
 		static void setValue(const QString& key, const QVariant& value, QString iniFileName = "atp.ini");
-		static void removeValue(const QString& key, QString iniFileName);
+		static void removeValue(const QString& key, QString iniFileName = "atp.ini");
 
 		static QVariant getValue(const QString &key, const QVariant& defaultValue = ATPDEFAULT_QVARIANT, QString iniFileName = "atp.ini");
 		static bool getBoolValue(const QString &key, bool defaultValue, QString iniFileName = "atp.ini");

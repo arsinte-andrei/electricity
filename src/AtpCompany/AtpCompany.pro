@@ -10,21 +10,32 @@ TEMPLATE = lib
 
 DEFINES += ATPCOMPANY_LIBRARY
 
-SOURCES += AtpChuseCompany.cpp \
-    AtpEditCompany.cpp
-
-HEADERS +=\
-		atpcompany_global.h \
-	AtpChuseCompany.h \
-    AtpEditCompany.h
-
 CONFIG += plugin
 NAME = AtpCompanyLib
 TARGET = $${NAME}
 
-FORMS += \
-	AtpChuseCompany.ui \
-    AtpEditCompany.ui
-
 LIBS += \
 	-lAtpCoreLib \
+
+HEADERS += \
+    atpcompany_global.h \
+    AtpCompanyChuse.h \
+    AtpCompanyEdit.h \
+    AtpCompanyGroupPlace.h \
+    AtpCompanyMaterials.h \
+    AtpCompanyPoints.h \
+    ui/uiAtpCompanyChuse.h \
+    ui/uiAtpCompanyEdit.h \
+    ui/uiAtpCompanyMaterials.h \
+    AtpCompanySuppliers.h \
+    ui/uiAtpCompanySuppliers.h \
+    ui/uiAtpCompanyPoints.h \
+    ui/uiAtpCompanyGroupPlace.h
+
+SOURCES += \
+    AtpCompanyChuse.cpp \
+    AtpCompanyEdit.cpp \
+    AtpCompanyGroupPlace.cpp \
+    AtpCompanyMaterials.cpp \
+    AtpCompanyPoints.cpp \
+    AtpCompanySuppliers.cpp

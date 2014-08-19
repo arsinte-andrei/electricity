@@ -7,7 +7,7 @@
 #include <QCloseEvent>
 
 #include "AtpSettings.h"
-#include "AtpDb.h"
+#include "AtpDbMain.h"
 
 
 AtpToolsSettings::AtpToolsSettings(QWidget *parent) : QDialog(parent), ui(new Ui::AtpToolsSettings){
@@ -147,8 +147,8 @@ void AtpToolsSettings::on_buttonOpenFile_clicked(){
 	QString oldPath = ui->editPathOpen->text();
 	QString dbFileName = QFileDialog::getOpenFileName(this,
 							   tr("Find dataBase file"),
-								QDir::currentPath(),
-								tr("atp dataBase(*.atpdb *.db)"));
+								AtpSettings::getDataBasePath(),
+								tr("atp dataBase(*.main.atpdb)"));
 
 	if (!dbFileName.isEmpty() && oldPath != dbFileName) {
 		ui->editPathOpen->setText(dbFileName);
@@ -172,13 +172,18 @@ void AtpToolsSettings::onSettingsChanged(){
 void AtpToolsSettings::on_buttonCreateDataBase_clicked(){
 	QString dbFileName = QFileDialog::getSaveFileName(this,
 							   tr("Create new atp dataBase file"),
-								QDir::currentPath(),
-								tr("atp dataBase(*.atpdb)"));
+								AtpSettings::getDataBasePath(),
+								tr("atp dataBase(*.main.atpdb)"));
+	if (!dbFileName.isEmpty()){
+		if (!dbFileName.endsWith(".main.atpdb")){
+			dbFileName.append(".main.atpdb");
+		}
 
-	if (!dbFileName.isEmpty() && AtpDb::createSQLiteDb(dbFileName)) {
-		ui->editPathOpen->setText(dbFileName);
-		AtpSettings::setValue("Db/Path", dbFileName);
-		restartDb = true;
+		if (AtpDbMain::createMainSQLiteDb(dbFileName)) {
+			ui->editPathOpen->setText(dbFileName);
+			AtpSettings::setValue("Db/Path", dbFileName);
+			restartDb = true;
+		}
 	}
 }
 

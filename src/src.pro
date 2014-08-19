@@ -7,12 +7,13 @@ SUBDIRS = \
 #    operations \
 #    stemmer \
 #    spatialindex \
-	AtpGui \
+	AtpTools \
+	AtpClient \
 	AtpCompany \
 #    io \
 #    customwidgets \
 #    scripting \
-	main \
-    AtpTools
+	AtpGui \
+	main
 
 TEMPLATE = subdirs
