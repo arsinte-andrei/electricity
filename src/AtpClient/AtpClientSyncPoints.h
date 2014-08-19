@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QSqlTableModel>
 #include <QSortFilterProxyModel>
+#include <QMap>
+#include <QCheckBox>
 
 namespace Ui {
 	class AtpClientSyncPoints;
@@ -13,14 +15,17 @@ class AtpClientSyncPoints : public QDialog{
 		Q_OBJECT
 
 	public:
-		explicit AtpClientSyncPoints(QWidget *parent = 0);
+		explicit AtpClientSyncPoints(QString clientName, QWidget *parent = 0);
 		~AtpClientSyncPoints();
 
 	private:
 		Ui::AtpClientSyncPoints *ui;
-		QSqlTableModel *modelPointComp, *modelPointClient;
-		QSortFilterProxyModel *proxyPointComp, *proxyPointclient;
-		int rowsCompPoint,rowsClientPoint;
+		QSqlTableModel *modelPointComp;
+		QSortFilterProxyModel *proxyPointComp;
+		int rowsCompPoint;
+		QMap<QString, QCheckBox *> mapCheckComp;
+		QMap<QString, bool> mapAllComp;
+		QString clientName;
 
 		void updateDb();
 
@@ -28,9 +33,11 @@ class AtpClientSyncPoints : public QDialog{
 		void onButtonOkClicked();
 		void onButtonCancelClicked();
 		void onButtonFromCompanyClicked();
-		void onButtonFromClientClicked();
 		void onCheckAllComp(int status);
-		void onCheckAllClient(int status);
+		void onCheckButtonCompPressed();
+		void connectAllCompCheck();
+		void disconnectAllCompCheck();
+		void onEditSearchCompPoint(const QString &arg1);
 };
 
 #endif // ATPCLIENTSYNCPOINTS_H

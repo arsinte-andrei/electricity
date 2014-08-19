@@ -23,10 +23,9 @@ public:
 	QLineEdit *editPrice1;
 	QHBoxLayout *horizontalLayout;
 	QPushButton *buttonOk;
-	QPushButton *buttonNew;
+	QPushButton *buttonSync;
 	QPushButton *buttonDelete;
 	QPushButton *buttonEdit;
-	QPushButton *buttonSync;
 	QPushButton *buttonCancel;
 	QLineEdit *editName;
 	QLabel *label_3;
@@ -40,7 +39,7 @@ public:
 		if (AtpClientPoints->objectName().isEmpty())
 			AtpClientPoints->setObjectName(QStringLiteral("AtpClientPoints"));
 		AtpClientPoints->resize(639, 379);
-		AtpClientPoints->setWindowTitle("Company Point price editor");
+		AtpClientPoints->setWindowTitle("Client Point price editor");
 
 		gridLayout = new QGridLayout(AtpClientPoints);
 		gridLayout->setObjectName(QStringLiteral("gridLayout"));
@@ -69,12 +68,12 @@ public:
 		buttonOk->setText("&Ok");
 		horizontalLayout->addWidget(buttonOk);
 
-		buttonNew = new QPushButton(AtpClientPoints);
-		buttonNew->setObjectName(QStringLiteral("buttonNew"));
-		sizePolicy.setHeightForWidth(buttonNew->sizePolicy().hasHeightForWidth());
-		buttonNew->setSizePolicy(sizePolicy);
-		buttonNew->setText("&New");
-		horizontalLayout->addWidget(buttonNew);
+		buttonSync = new QPushButton(AtpClientPoints);
+		buttonSync->setObjectName(QStringLiteral("buttonSync"));
+		sizePolicy.setHeightForWidth(buttonSync->sizePolicy().hasHeightForWidth());
+		buttonSync->setSizePolicy(sizePolicy);
+		buttonSync->setText("&Sync");
+		horizontalLayout->addWidget(buttonSync);
 
 		buttonDelete = new QPushButton(AtpClientPoints);
 		buttonDelete->setObjectName(QStringLiteral("buttonDelete"));
@@ -89,13 +88,6 @@ public:
 		buttonEdit->setSizePolicy(sizePolicy);
 		buttonEdit->setText("&Edit");
 		horizontalLayout->addWidget(buttonEdit);
-
-		buttonSync = new QPushButton(AtpClientPoints);
-		buttonSync->setObjectName(QStringLiteral("buttonSync"));
-		sizePolicy.setHeightForWidth(buttonSync->sizePolicy().hasHeightForWidth());
-		buttonSync->setSizePolicy(sizePolicy);
-		buttonSync->setText("&Sync");
-		horizontalLayout->addWidget(buttonSync);
 
 		buttonCancel = new QPushButton(AtpClientPoints);
 		buttonCancel->setObjectName(QStringLiteral("buttonCancel"));
@@ -150,8 +142,7 @@ public:
 			enableAndDisable("disableFields");
 			enableAndDisable("clearFields");
 		} else if (condition == "resetButtons"){
-			buttonNew->setText("New");
-			buttonNew->setEnabled(true);
+			buttonSync->setEnabled(true);
 			buttonEdit->setText("Edit");
 			buttonEdit->setEnabled(false);
 			buttonDelete->setEnabled(false);
@@ -177,14 +168,7 @@ public:
 		} else if (condition == "edit"){
 			buttonEdit->setText("Save");
 			buttonDelete->setEnabled(false);
-			buttonNew->setEnabled(false);
-			enableAndDisable("enableFields");
-		} else if (condition == "new") {
-			buttonNew->setText("Save");
-			buttonDelete->setEnabled(false);
-			buttonEdit->setEnabled(false);
-			editSearch->setEnabled(false);
-			enableAndDisable("clearFields");
+			buttonSync->setEnabled(false);
 			enableAndDisable("enableFields");
 		}
 	}

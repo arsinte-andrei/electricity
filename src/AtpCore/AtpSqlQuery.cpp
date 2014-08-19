@@ -7,12 +7,12 @@
 #include <QSqlError>
 
 QSqlDatabase AtpSqlQuery::getDbConnection(QString connectionName){
-	if (connectionName == "main"){
+	if (connectionName.startsWith("main")){
 		return AtpDbMain::getDataBase();
-	} else if (connectionName == "comp") {
+	} else if (connectionName.startsWith("comp")) {
 		return AtpDbComp::getDataBase();
-	} else if(connectionName == "client") {
-		return AtpDbClient::getDataBase();
+	} else if(connectionName.startsWith("client")) {
+		return AtpDbClient::getDataBase(connectionName.mid(7));
 	}
 	return QSqlDatabase::addDatabase("","noConnection");
 }

@@ -9,22 +9,24 @@
 
 QSqlDatabase AtpDbClient::clientDB;
 
+QMap<QString, QSqlDatabase> AtpDbClient::clientConnections;
+
 QString AtpDbClient::dbPath = "";
 QString AtpDbClient::dbType = "";
 
-bool AtpDbClient::readIniFile(){
-	if (readIniDbPath() && readIniDbType()){
+bool AtpDbClient::readIniFile(QString connectionName){
+	if (readIniDbPath(connectionName) && readIniDbType()){
 		return true;
 	} else {
 		return false;
 	}
 }
 
-bool AtpDbClient::readIniDbPath(){
+bool AtpDbClient::readIniDbPath(QString connectionName){
 	dbPath.clear();
 	QString compPath = AtpSettings::getStringValue("Company/Path", "");
 	QString mainCompPath = AtpSettings::getCompanyPath(compPath);
-	dbPath = mainCompPath + "/" + compPath.append(".atpdb");
+	dbPath = mainCompPath + "/" + connectionName.append(".atpdb");
 	if (dbFileExist(dbPath)){
 		return true;
 	} else {
@@ -79,8 +81,8 @@ bool AtpDbClient::isDriverAvailable(QString tip){
 	return true;
 }
 
-bool AtpDbClient::setNewConnection(){
-	clientDB = QSqlDatabase::addDatabase(dbType, "clientDbConnection");
+bool AtpDbClient::setNewConnection(QString connectionName){
+	clientDB = QSqlDatabase::addDatabase(dbType, connectionName);
 	clientDB.setDatabaseName(dbPath);
 	if (!clientDB.open()){
 		qCritical() << "couldn't connect to database Error[" << clientDB.lastError().text() << "]"  << dbPath;
@@ -91,8 +93,12 @@ bool AtpDbClient::setNewConnection(){
 	}
 }
 
-bool AtpDbClient::isOpen(){
-	return clientDB.isOpen();
+bool AtpDbClient::isOpen(QString connectionName){
+	if(clientConnections.contains(connectionName)){
+		clientDB = clientConnections.value(connectionName);
+		return clientDB.isOpen();
+	}
+	return false;
 }
 
 void AtpDbClient::setDataBasePath(QString newPath){
@@ -105,18 +111,29 @@ void AtpDbClient::setDataBaseType(QString newType){
 	uninit();
 }
 
-QSqlDatabase AtpDbClient::getDataBase(){
-	if (!clientDB.isOpen()){
-		if(readIniFile()){
-			setNewConnection();
+QSqlDatabase AtpDbClient::getDataBase(QString connectionName){
+	if(clientConnections.contains(connectionName)){
+		clientDB = clientConnections.value(connectionName);
+		if (!clientDB.isOpen()){
+			if(readIniFile(connectionName)){
+				setNewConnection(connectionName);
+			}
+		}
+		return clientDB;
+	} else {
+		if(readIniFile(connectionName)){
+			setNewConnection(connectionName);
+			clientConnections.insert(connectionName, clientDB);
 		}
 	}
 	return clientDB;
 }
 
 bool AtpDbClient::uninit() {
+	//TODO se poate sa trebuiasca sa se parcurga tot qmap - de verificat
 	clientDB.close();
 	QSqlDatabase::removeDatabase(clientDB.connectionName());
+	clientConnections.clear();
 	if(clientDB.isOpen()){
 		return false;
 	} else {

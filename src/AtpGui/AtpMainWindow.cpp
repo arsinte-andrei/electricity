@@ -379,7 +379,8 @@ void AtpMainWindow::onActClientEditClientsList(){
 }
 
 void AtpMainWindow::onActClientPoints(){
-	AtpClientPoints *clientPointsEditor = new AtpClientPoints;
+	//TODO require to read client file
+	AtpClientPoints *clientPointsEditor = new AtpClientPoints("client:unclientfidel");
 	clientPointsEditor->setAttribute(Qt::WA_DeleteOnClose);
 	//possible windows to close
 	connect(clientPointsEditor, SIGNAL(exitSignal()), actFileClose, SLOT(trigger()));
@@ -470,8 +471,8 @@ void AtpMainWindow::checkForClient(){
 	}
 
 	if (loadClientName == newClientName && loadClientPath == newClientPath){
-		AtpDbClient::getDataBase();
-		if(AtpDbComp::isOpen()){
+		AtpDbClient::getDataBase(loadClientPath);
+		if(AtpDbClient::isOpen(loadClientPath)){
 			clientLoaded = true;
 			winTitleClient = newClientName;
 		}

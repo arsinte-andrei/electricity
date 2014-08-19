@@ -15,7 +15,7 @@ class ATPCLIENT_EXPORT AtpClientPoints : public QWidget{
 		Q_OBJECT
 
 	public:
-		explicit AtpClientPoints(QWidget *parent = 0);
+		explicit AtpClientPoints(QString clientName, QWidget *parent = 0);
 		~AtpClientPoints();
 
 	public slots:
@@ -30,18 +30,18 @@ class ATPCLIENT_EXPORT AtpClientPoints : public QWidget{
 		void onButtonCancelClicked();
 		void onButtonEditClicked();
 		void onButtonDeleteClicked();
-		void onButtonNewClicked();
 		void onButtonOkClicked();
 		void onButtonSyncClicked();
 		void resetVars();
 
 	private:
 		Ui::AtpClientPoints *ui;
-		bool seEediteaza, eNou, eVechi;
+		bool seEediteaza, eVechi;
 		QMap<QString, QVariant> *data;
 		QSqlTableModel *model;
 		QSortFilterProxyModel *proxyModel;
 		int punctId;
+		QString clientName;
 };
 
 #endif // AtpClientPoints_H

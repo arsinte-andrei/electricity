@@ -11,7 +11,7 @@
 
 class ATPCORE_EXPORT AtpSqlQuery {
 	public:
-		static QSqlDatabase getDbConnection(QString connectionName);
+		static QSqlDatabase getDbConnection(QString connectionName = "");
 
 		static QSqlQuery atpCreateView(QString dbName, QString sqlQuerry);
 		static QSqlQuery atpDeleteView(QString dbName, QString viewName);

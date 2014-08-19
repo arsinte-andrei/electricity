@@ -6,14 +6,15 @@
 #include <QDebug>
 #include <QMessageBox>
 
-AtpClientPoints::AtpClientPoints(QWidget *parent) : QWidget(parent), ui(new Ui::AtpClientPoints){
+AtpClientPoints::AtpClientPoints(QString clientName, QWidget *parent) : QWidget(parent), ui(new Ui::AtpClientPoints){
+	this->clientName = clientName;
 	ui->setupUi(this);
+	clientName.clear();
 	data = new QMap<QString, QVariant>;
-	model = new QSqlTableModel(this, AtpSqlQuery::getDbConnection("client"));
+	model = new QSqlTableModel(this, AtpSqlQuery::getDbConnection(this->clientName));
 	updateDb();
 
 	connect(ui->buttonOk, SIGNAL(clicked()), this, SLOT(onButtonOkClicked()));
-	connect(ui->buttonNew, SIGNAL(clicked()), this, SLOT(onButtonNewClicked()));
 	connect(ui->buttonDelete, SIGNAL(clicked()), this, SLOT(onButtonDeleteClicked()));
 	connect(ui->buttonEdit, SIGNAL(clicked()), this, SLOT(onButtonEditClicked()));
 	connect(ui->buttonSync, SIGNAL(clicked()), this, SLOT(onButtonSyncClicked()));
@@ -28,6 +29,7 @@ AtpClientPoints::~AtpClientPoints(){
 
 void AtpClientPoints::updateDb() {
 	ui->enableAndDisable("reset");
+	resetVars();
 
 	model->setTable("cl_point_price_t");
 	model->setEditStrategy(QSqlTableModel::OnManualSubmit);
@@ -105,7 +107,7 @@ void AtpClientPoints::onButtonEditClicked(){
 		data->insert(":punct_name", ui->editName->text());
 		data->insert(":punct_price1", ui->editPrice1->text());
 		data->insert(":punct_price2", ui->editPrice2->text());
-		AtpSqlQuery::atpUpdate("comp", "comp_point_price_t", data, "punct_id = :punct_id");
+		AtpSqlQuery::atpUpdate(clientName, "cl_point_price_t", data, "punct_id = :punct_id");
 		updateDb();
 	}
 }
@@ -124,31 +126,11 @@ void AtpClientPoints::onButtonDeleteClicked(){
 			break;
 		case QMessageBox::Yes:{
 			QString whereTo = QString("punct_id = %1").arg(punctId);
-			AtpSqlQuery::atpDelete("comp", "comp_point_price_t", whereTo);
-			updateDb();
-			ui->enableAndDisable("reset");
-			resetVars();}
+			AtpSqlQuery::atpDelete(clientName, "cl_point_price_t", whereTo);
+			updateDb(); }
 			break;
 		default:
 			break;
-	}
-}
-
-void AtpClientPoints::onButtonNewClicked(){
-	QString buttonName;
-	buttonName = ui->buttonNew->text();
-	if ( buttonName == "New"){
-		ui->enableAndDisable("new");
-		seEediteaza = true;
-		eNou = true;
-	} else {
-		data->clear();
-		data->insert(":punct_name", ui->editName->text());
-		data->insert(":punct_price1", ui->editPrice1->text());
-		data->insert(":punct_price2", ui->editPrice2->text());
-		AtpSqlQuery::atpInsert("comp", "comp_point_price_t", data);
-		updateDb();
-		resetVars();
 	}
 }
 
@@ -164,11 +146,7 @@ void AtpClientPoints::onButtonOkClicked(){
 			msgBox.setDefaultButton(QMessageBox::No);
 			int ret = msgBox.exec();
 			if (ret == QMessageBox::Yes){
-				if (eNou){
-					onButtonNewClicked();
-					close();
-					emit exitSignal();
-				} else if (eVechi){
+				if (eVechi){
 					onButtonEditClicked();
 					close();
 					emit exitSignal();
@@ -181,7 +159,7 @@ void AtpClientPoints::onButtonOkClicked(){
 }
 
 void AtpClientPoints::onButtonSyncClicked(){
-	AtpClientSyncPoints *syncPoints = new AtpClientSyncPoints;
+	AtpClientSyncPoints *syncPoints = new AtpClientSyncPoints(this->clientName);
 	syncPoints->setModal(true);
 	syncPoints->exec();
 	qDebug()<< "dupa exec";
@@ -190,7 +168,6 @@ void AtpClientPoints::onButtonSyncClicked(){
 
 void AtpClientPoints::resetVars(){
 	seEediteaza = false;
-	eNou = false;
 	eVechi = false;
 	punctId = 0;
 }
