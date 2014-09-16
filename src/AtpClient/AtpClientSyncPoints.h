@@ -38,6 +38,7 @@ class AtpClientSyncPoints : public QDialog{
 		void connectAllCompCheck();
 		void disconnectAllCompCheck();
 		void onEditSearchCompPoint(const QString &arg1);
+		void updateCheckBoxPosition();
 };
 
 #endif // ATPCLIENTSYNCPOINTS_H

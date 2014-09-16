@@ -3,11 +3,11 @@
 
 #include "atpclient_global.h"
 #include <QWidget>
-
+/*
 namespace Ui {
 	class AtpClientQuotes;
 }
-
+*/
 class ATPCLIENT_EXPORT AtpClientQuotes : public QWidget{
 		Q_OBJECT
 
@@ -16,7 +16,7 @@ class ATPCLIENT_EXPORT AtpClientQuotes : public QWidget{
 		~AtpClientQuotes();
 
 	private:
-		Ui::AtpClientQuotes *ui;
+//		Ui::AtpClientQuotes *ui;
 };
 
 #endif // AtpClientQuotes_H

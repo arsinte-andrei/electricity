@@ -36,6 +36,7 @@ class ATPGUILIB_EXPORT AtpMainWindow : public QMainWindow{
 	private:
 		QString winTitleCompany, winTitleClient;
 		AtpDef::mainWindowLoadingStatus appStatus;
+		QMap<QString, QWidget *> openedTabs;
 		void readSettings();
 		void writeSettings();
 
@@ -97,6 +98,7 @@ class ATPGUILIB_EXPORT AtpMainWindow : public QMainWindow{
 		void restartDatabase();
 		void checkForCompany();
 		void checkForClient();
+		QWidget *activeMdiChild();
 //company
 		void onActCompChuseCompany();
 		void onActCompEditCompany();
@@ -107,6 +109,10 @@ class ATPGUILIB_EXPORT AtpMainWindow : public QMainWindow{
 //Clients
 		void onActClientChuseClient();
 		void onActClientEditClientsList();
+		void onActClientInvoices();
+		void onActClientReceipts();
+		void onActClientQuotes();
+		void onActClientMaterials();
 		void onActClientPoints();
 //Tools
 		void onActToolsSettings();

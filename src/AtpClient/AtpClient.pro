@@ -30,7 +30,9 @@ HEADERS += \
 	AtpClientPoints.h \
 	ui/uiAtpClientPoints.h \
 	AtpClientSyncPoints.h \
-	ui/uiAtpClientSyncPoints.h
+	ui/uiAtpClientSyncPoints.h \
+    AtpClientMaterials.h \
+    ui/uiAtpClientMaterials.h
 
 SOURCES += \
 	AtpClientEditList.cpp \
@@ -39,4 +41,5 @@ SOURCES += \
 	AtpClientReceipts.cpp \
 	AtpClientChuse.cpp \
 	AtpClientPoints.cpp \
-	AtpClientSyncPoints.cpp
+	AtpClientSyncPoints.cpp \
+    AtpClientMaterials.cpp

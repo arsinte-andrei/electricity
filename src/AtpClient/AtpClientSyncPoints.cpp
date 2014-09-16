@@ -57,12 +57,14 @@ void AtpClientSyncPoints::updateDb() {
 		QCheckBox *unulNou = new QCheckBox;
 		mapCheckComp.insert(newIndexData.data().toString(), unulNou);
 		mapAllComp.insert(newIndexData.data().toString(), false);
-		ui->tableCompPoint->setIndexWidget(newIndex, unulNou);
+//		ui->tableCompPoint->setIndexWidget(newIndex, unulNou);
 	}
+	updateCheckBoxPosition();
 }
 
 void AtpClientSyncPoints::onButtonOkClicked(){
- this->accept();
+	onButtonFromCompanyClicked();
+	this->accept();
 }
 
 void AtpClientSyncPoints::onButtonCancelClicked(){
@@ -91,7 +93,6 @@ void AtpClientSyncPoints::onButtonFromCompanyClicked(){
 			}
 		}
 	}
-	updateDb();
 }
 
 void AtpClientSyncPoints::onCheckAllComp(int status){
@@ -181,4 +182,16 @@ void AtpClientSyncPoints::onEditSearchCompPoint(const QString &arg1){
 		ui->tableCompPoint->setIndexWidget(newIndex, mapCheckComp.value(newIndexData.data().toString()));
 	}
 	*/
+	updateCheckBoxPosition();
+}
+
+void AtpClientSyncPoints::updateCheckBoxPosition(){
+	for (int i = 0; i < proxyPointComp->rowCount(); ++i) {
+		QModelIndex newIndex = ui->tableCompPoint->model()->index(i,0);
+		QModelIndex newIndexData = ui->tableCompPoint->model()->index(i,1);
+		QCheckBox *unulNou = new QCheckBox;
+//		mapCheckComp.insert(newIndexData.data().toString(), unulNou);
+//		mapAllComp.insert(newIndexData.data().toString(), false);
+		ui->tableCompPoint->setIndexWidget(newIndex, unulNou);
+	}
 }

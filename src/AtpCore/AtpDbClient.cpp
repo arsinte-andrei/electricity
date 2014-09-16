@@ -157,15 +157,15 @@ bool AtpDbClient::createClientStructure(QString dbNewPath, QString dbNewFileName
 	}
 	QVector<QString> tables(0);
 
-//	tables.append("CREATE TABLE cl_for_tbl (for_id integer				PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, for_name text);");
-//	tables.append("CREATE TABLE cl_group_tbl (group_id integer			PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, group_place text);");
-//	tables.append("CREATE TABLE cl_invoice_tbl (inv_id integer			PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, inv_quote_id  integer,	inv_date date, inv_for_id integer, inv_value real);");
-	tables.append("CREATE TABLE cl_materiale_t ( mat_id integer		PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, mat_name text, mat_price1 real, mat_price2 real, mat_supplier_id  integer);");
-//	tables.append("CREATE TABLE cl_plata_tbl (plata_id integer			PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, plata_detalii  text);");
-	tables.append("CREATE TABLE cl_point_price_t ( punct_id integer		PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, punct_name    text, punct_price1  real,  punct_price2  real);");
+//	tables.append("CREATE TABLE cl_for_tbl (for_id integer			PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, for_name text);");
+//	tables.append("CREATE TABLE cl_group_tbl (group_id integer		PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, group_place text);");
+//	tables.append("CREATE TABLE cl_invoice_tbl (inv_id integer		PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, inv_quote_id  integer,	inv_date date, inv_for_id integer, inv_value real);");
+	tables.append("CREATE TABLE cl_materiale_t ( mat_id integer		PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, mat_name text,mat_quantity integer, mat_price1 real, mat_price2 real, mat_supplier_id  integer);");
+//	tables.append("CREATE TABLE cl_plata_tbl (plata_id integer		PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, plata_detalii  text);");
+	tables.append("CREATE TABLE cl_point_price_t ( punct_id integer	PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, punct_name    text, punct_price1  real,  punct_price2  real);");
 	tables.append("CREATE TABLE cl_quotation_detail_t (qd_id integer PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, qd_q_id	integer, qd_item_place integer, qd_price_id	integer, qd_quantity1 integer, qd_quantity2 integer, qd_note text);");
-//	tables.append("CREATE TABLE cl_quotation_t (q_id integer			PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, q_client_id integer, q_company_id integer, q_data date, q_price1 real, q_price2 real, q_price3 real, q_mytotal real);");
-//	tables.append("CREATE TABLE cl_receipt_t (re_id integer				PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, re_inv_id integer, re_total real, re_client_id integer, re_comp_id integer);");
+//	tables.append("CREATE TABLE cl_quotation_t (q_id integer		PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, q_client_id integer, q_company_id integer, q_data date, q_price1 real, q_price2 real, q_price3 real, q_mytotal real);");
+//	tables.append("CREATE TABLE cl_receipt_t (re_id integer			PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, re_inv_id integer, re_total real, re_client_id integer, re_comp_id integer);");
 	tables.append("CREATE TABLE cl_receipt_detail_t (red_id integer	PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, red_re_id integer, red_data date, red_amount real, red_detail integer, red_note text);");
 
 	QSqlQuery myquerry = QSqlQuery(myNewdb);

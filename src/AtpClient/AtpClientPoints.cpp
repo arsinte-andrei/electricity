@@ -9,7 +9,6 @@
 AtpClientPoints::AtpClientPoints(QString clientName, QWidget *parent) : QWidget(parent), ui(new Ui::AtpClientPoints){
 	this->clientName = clientName;
 	ui->setupUi(this);
-	clientName.clear();
 	data = new QMap<QString, QVariant>;
 	model = new QSqlTableModel(this, AtpSqlQuery::getDbConnection(this->clientName));
 	updateDb();

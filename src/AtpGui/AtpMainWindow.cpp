@@ -20,6 +20,7 @@
 //clients
 #include "AtpClientChuse.h"
 #include "AtpClientEditList.h"
+#include "AtpClientMaterials.h"
 #include "AtpClientPoints.h"
 //tools
 #include "AtpToolsSettings.h"
@@ -30,6 +31,8 @@
 #include "AtpSqlQuery.h"
 
 AtpMainWindow::AtpMainWindow(QWidget *parent) : QMainWindow(parent){
+	openedTabs.clear();
+
 	winTitleCompany.clear();
 	winTitleClient.clear();
 	appStatus = AtpDef::noDataBaseLoaded;
@@ -69,11 +72,7 @@ void AtpMainWindow::quit() {
 	emit closeRequested();
 	QMainWindow::close();
 }
-/*
-void AtpMainWindow::testSlot(bool closeThem){
-	mdiArea->closeAllSubWindows();
-}
-*/
+
 //event on close mainWindow
 void AtpMainWindow::closeEvent(QCloseEvent *event) {
 	qDebug()<<"Start closeEvent";
@@ -107,10 +106,12 @@ void AtpMainWindow::createActions(){
 	actFileExit->setShortcuts(QKeySequence::Quit);
 	actFileExit->setStatusTip(tr("Exit the application"));
 	connect(actFileExit, SIGNAL(triggered()), qApp, SLOT(closeAllWindows()));
+
 	//Close current open window
 	actFileClose = new QAction(tr("Cl&ose"), this);
 	actFileClose->setStatusTip(tr("Close the active window"));
 	connect(actFileClose, SIGNAL(triggered()), mdiArea, SLOT(closeActiveSubWindow()));
+
 	//Close all active windows
 	actFileCloseAll = new QAction(tr("Close &All"), this);
 	actFileCloseAll->setStatusTip(tr("Close all the windows"));
@@ -159,12 +160,17 @@ void AtpMainWindow::createActions(){
 	//invoices
 	actClientInvoices = new QAction(QIcon(":/invoice.png"), tr("Invoices"), this);
 	actClientInvoices->setStatusTip(tr("Manage the invoices"));
+	connect(actClientInvoices, SIGNAL(triggered()), this, SLOT(onActClientInvoices()));
+
 	//receipt
 	actClientReceipt = new QAction(QIcon(":/receipt.png"), tr("Receipts"), this);
 	actClientReceipt->setStatusTip(tr("Manage the receipts"));
+	connect(actClientReceipt, SIGNAL(triggered()), this, SLOT(onActClientReceipts()));
+
 	//quotes
 	actClientQuotes = new QAction(QIcon(":/quotes.png"), tr("Quotes"), this);
 	actClientQuotes->setStatusTip(tr("Manage the quotes"));
+	connect(actClientQuotes, SIGNAL(triggered()), this, SLOT(onActClientQuotes()));
 
 	//points
 	actClientPoints = new QAction(QIcon(":/points.png"), tr("Points"), this);
@@ -174,7 +180,7 @@ void AtpMainWindow::createActions(){
 	//materials
 	actClientMaterials = new QAction(QIcon(":/materials.png"), tr("Materials"), this);
 	actClientMaterials->setStatusTip(tr("Manage the materials used on jobs"));
-	connect(actClientMaterials, SIGNAL(triggered()), this, SLOT(onActCompMaterials()));
+	connect(actClientMaterials, SIGNAL(triggered()), this, SLOT(onActClientMaterials()));
 //Tools
 	//Users
 	actToolsUsers = new QAction(QIcon(":/users.png"), tr("Users"), this);
@@ -213,7 +219,9 @@ void AtpMainWindow::createActions(){
 void AtpMainWindow::createMenus(){
 //File Menu
 	menuFile = menuBar()->addMenu(tr("&File"));
-//	fileMenu->addSeparator();
+	menuFile->addAction(actFileClose);
+	menuFile->addAction(actFileCloseAll);
+	menuFile->addSeparator();
 	menuFile->addAction(actFileExit);
 //Company Menu
 	menuCompany = menuBar()->addMenu(tr("&Company"));
@@ -225,8 +233,7 @@ void AtpMainWindow::createMenus(){
 	menuCompany->addSeparator();
 	menuCompany->addAction(actCompPoints);
 	menuCompany->addAction(actCompPlace);
-
-//Modules Menu
+//Clients Menu
 	menuClients = menuBar()->addMenu(tr("C&lients"));
 	menuClients->addAction(actClientChuse);
 	menuClients->addAction(actClientList);
@@ -237,7 +244,6 @@ void AtpMainWindow::createMenus(){
 	menuClients->addSeparator();
 	menuClients->addAction(actClientMaterials);
 	menuClients->addAction(actClientPoints);
-
 //Tools Menu
 	menuTools = menuBar()->addMenu(tr("&Tools"));
 	menuTools->addAction(actToolsUsers);
@@ -260,7 +266,6 @@ void AtpMainWindow::createMenus(){
 }
 
 void AtpMainWindow::createToolBars(){
-
 //	toolBarComp = addToolBar(tr("Company"));
 	addToolBar(toolBarComp);
 	toolBarComp->addAction(actCompChuse);
@@ -274,10 +279,16 @@ void AtpMainWindow::createStatusBar(){
 void AtpMainWindow::updateMenus(){
 	//FIXME sa se faca update la meniu in functie de schimbarea tabului si de elementele deschise si incarcate precum baza de date si compania
 	qDebug() << "Shimbat Tabul In mdi area";
-//	bool hasMdiChild = true; //(activeMdiChild() != 0);
-//	closeAct->setEnabled(hasMdiChild);
-//	closeAllAct->setEnabled(hasMdiChild);
+	bool hasMdiChild = (activeMdiChild() != 0);
+	actFileClose->setEnabled(hasMdiChild);
+	actFileCloseAll->setEnabled(hasMdiChild);
 	//	separatorAct->setVisible(hasMdiChild);
+}
+
+QWidget *AtpMainWindow::activeMdiChild(){
+	if (QMdiSubWindow *activeSubWindow = mdiArea->activeSubWindow())
+		return qobject_cast<QWidget *>(activeSubWindow->widget());
+	return 0;
 }
 
 /*
@@ -294,32 +305,36 @@ void AtpMainWindow::onActCompChuseCompany(){
 }
 
 void AtpMainWindow::onActCompEditCompany(){
-	//FIXME sa se deschida doar o singura fereastra si nu mai multe
-/*
-	AtpCompanyEdit *mdiChild;
 
+	AtpCompanyEdit *mdiChild;
 	foreach (QMdiSubWindow *window, mdiArea->subWindowList()) {
 		mdiChild = qobject_cast<AtpCompanyEdit *>(window->widget());
-
+		if(mdiChild){
+			mdiArea->setActiveSubWindow(window);
+			return;
+		}
 	}
-	if(mdiChild){
-		mdiArea->setActiveSubWindow(mdiChild);
-	} else {
-*/
+
 	AtpCompanyEdit *companyEditor = new AtpCompanyEdit;
 	companyEditor->setAttribute(Qt::WA_DeleteOnClose);
-	//possible windows to close
 	connect(companyEditor, SIGNAL(exitSignal()), actFileClose, SLOT(trigger()));
 	mdiArea->addSubWindow(companyEditor);
 	companyEditor->show();
 	companyEditor->activateWindow();
-//	}
 }
 
 void AtpMainWindow::onActCompEditSuppliers(){
+	AtpCompanySuppliers *mdiChild;
+	foreach (QMdiSubWindow *window, mdiArea->subWindowList()) {
+		mdiChild = qobject_cast<AtpCompanySuppliers *>(window->widget());
+		if(mdiChild){
+			mdiArea->setActiveSubWindow(window);
+			return;
+		}
+	}
+
 	AtpCompanySuppliers *companySuppliers = new AtpCompanySuppliers;
 	companySuppliers->setAttribute(Qt::WA_DeleteOnClose);
-	//possible windows to close
 	connect(companySuppliers, SIGNAL(exitSignal()), actFileClose, SLOT(trigger()));
 	mdiArea->addSubWindow(companySuppliers);
 	companySuppliers->show();
@@ -327,9 +342,17 @@ void AtpMainWindow::onActCompEditSuppliers(){
 }
 
 void AtpMainWindow::onActCompMaterials(){
+	AtpCompanyMaterials *mdiChild;
+	foreach (QMdiSubWindow *window, mdiArea->subWindowList()) {
+		mdiChild = qobject_cast<AtpCompanyMaterials *>(window->widget());
+		if(mdiChild){
+			mdiArea->setActiveSubWindow(window);
+			return;
+		}
+	}
+
 	AtpCompanyMaterials *myMaterials = new AtpCompanyMaterials;
 	myMaterials->setAttribute(Qt::WA_DeleteOnClose);
-	//possible windows to close
 	connect(myMaterials, SIGNAL(exitSignal()), actFileClose, SLOT(trigger()));
 	mdiArea->addSubWindow(myMaterials);
 	myMaterials->show();
@@ -337,9 +360,17 @@ void AtpMainWindow::onActCompMaterials(){
 }
 
 void AtpMainWindow::onActCompPoints(){
+	AtpCompanyPoints *mdiChild;
+	foreach (QMdiSubWindow *window, mdiArea->subWindowList()) {
+		mdiChild = qobject_cast<AtpCompanyPoints *>(window->widget());
+		if(mdiChild){
+			mdiArea->setActiveSubWindow(window);
+			return;
+		}
+	}
+
 	AtpCompanyPoints *myPoints = new AtpCompanyPoints;
 	myPoints->setAttribute(Qt::WA_DeleteOnClose);
-	//possible windows to close
 	connect(myPoints, SIGNAL(exitSignal()), actFileClose, SLOT(trigger()));
 	mdiArea->addSubWindow(myPoints);
 	myPoints->show();
@@ -347,6 +378,15 @@ void AtpMainWindow::onActCompPoints(){
 }
 
 void AtpMainWindow::onActCompGroupPlace(){
+	AtpCompanyGroupPlace *mdiChild;
+	foreach (QMdiSubWindow *window, mdiArea->subWindowList()) {
+		mdiChild = qobject_cast<AtpCompanyGroupPlace *>(window->widget());
+		if(mdiChild){
+			mdiArea->setActiveSubWindow(window);
+			return;
+		}
+	}
+
 	AtpCompanyGroupPlace *myCompGroupPlce = new AtpCompanyGroupPlace;
 	myCompGroupPlce->setAttribute(Qt::WA_DeleteOnClose);
 	connect(myCompGroupPlce, SIGNAL(exitSignal()), actFileClose, SLOT(trigger()));
@@ -369,20 +409,65 @@ void AtpMainWindow::onActClientChuseClient(){
 }
 
 void AtpMainWindow::onActClientEditClientsList(){
+	AtpClientEditList *mdiChild;
+	foreach (QMdiSubWindow *window, mdiArea->subWindowList()) {
+		mdiChild = qobject_cast<AtpClientEditList *>(window->widget());
+		if(mdiChild){
+			mdiArea->setActiveSubWindow(window);
+			return;
+		}
+	}
+
 	AtpClientEditList *clientEditor = new AtpClientEditList;
 	clientEditor->setAttribute(Qt::WA_DeleteOnClose);
-	//possible windows to close
 	connect(clientEditor, SIGNAL(exitSignal()), actFileClose, SLOT(trigger()));
 	mdiArea->addSubWindow(clientEditor);
 	clientEditor->show();
 	clientEditor->activateWindow();
 }
 
+void AtpMainWindow::onActClientInvoices(){
+
+}
+
+void AtpMainWindow::onActClientReceipts(){
+
+}
+
+void AtpMainWindow::onActClientQuotes(){
+
+}
+
+void AtpMainWindow::onActClientMaterials(){
+	AtpClientMaterials *mdiChild;
+	foreach (QMdiSubWindow *window, mdiArea->subWindowList()) {
+		mdiChild = qobject_cast<AtpClientMaterials *>(window->widget());
+		if(mdiChild){
+			mdiArea->setActiveSubWindow(window);
+			return;
+		}
+	}
+	//TODO require to read client file
+	AtpClientMaterials *clientMaterials = new AtpClientMaterials("client:testdeclient");
+	clientMaterials->setAttribute(Qt::WA_DeleteOnClose);
+	connect(clientMaterials, SIGNAL(exitSignal()), actFileClose, SLOT(trigger()));
+	mdiArea->addSubWindow(clientMaterials);
+	clientMaterials->show();
+	clientMaterials->activateWindow();
+}
+
 void AtpMainWindow::onActClientPoints(){
+	AtpClientPoints *mdiChild;
+	foreach (QMdiSubWindow *window, mdiArea->subWindowList()) {
+		mdiChild = qobject_cast<AtpClientPoints *>(window->widget());
+		if(mdiChild){
+			mdiArea->setActiveSubWindow(window);
+			return;
+		}
+	}
 	//TODO require to read client file
 	AtpClientPoints *clientPointsEditor = new AtpClientPoints("client:unclientfidel");
 	clientPointsEditor->setAttribute(Qt::WA_DeleteOnClose);
-	//possible windows to close
 	connect(clientPointsEditor, SIGNAL(exitSignal()), actFileClose, SLOT(trigger()));
 	mdiArea->addSubWindow(clientPointsEditor);
 	clientPointsEditor->show();
